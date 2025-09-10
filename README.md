@@ -63,7 +63,6 @@ When pushing to branch main or develop, the workflow will:
 
 Open in browser:: http://18.153.68.11
 
-
 #### 6. Cleanup
 
 To destroy all resources created by Terraform, run:
