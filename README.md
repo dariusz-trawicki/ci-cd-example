@@ -49,10 +49,12 @@ IMAGE_TAG: staging-latest
 
 The workflow builds a `Docker` image, pushes it to `ECR`, applies `Terraform` changes, and refreshes the `Docker` container on the `EC2` instance via `SSM`.
 
-#### 4. Push to Github (branch `main` or `develop`). The workflow will:
-  - **build & push** `myapp:staging-latest` to `ECR`,
-  - `terraform apply` (idempotent updates),
-  - refresh the container on `EC2` via `SSM`.
+#### 4.Push to GitHub
+
+When pushing to branch main or develop, the workflow will:
+  - **Build & push** `myapp:staging-latest` to `ECR`.
+  - Run `terraform apply` to ensure AWS resources are up to date.
+  - Restart the container on the `EC2` instance (via `SSM`).
 
 #### 5. Verify Results
 
