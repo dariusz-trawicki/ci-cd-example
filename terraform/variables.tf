@@ -58,7 +58,7 @@ variable "github_ref" {
 # Role name to be assumed by GitHub Actions
 variable "role_name" {
   type    = string
-  default = "github-ci-cd-repo"
+  default = "github-ci-cd-role"
 }
 
 # If an OIDC provider for GitHub already exists in the account, provide its ARN here to reuse it.

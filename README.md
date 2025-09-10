@@ -1,1 +1,54 @@
-# ci-cd-example
+# CI/CD Pipeline with GitHub Actions and Terraform for AWS ((OIDC + Terraform + Docker)
+
+
+This example shows how to deploy a Dockerized application to an EC2 instance using GitHub Actions and Terraform with OIDC authentication.
+It includes:
+- Terraform code to set up AWS resources (EC2, ECR, IAM roles).
+- GitHub Actions workflow to build and push Docker images to ECR, and deploy to EC
+- EC2 instance configured to run Docker and pull images from ECR.
+
+1. Create S3 bucket for state backend 
+
+In `s3-backend/main.tf` set unique bucket name.
+
+```bash
+cd s3-backend
+terraform init
+terraform apply
+```
+
+2. Create an IAM Role for GitHub OIDC in AWS:
+
+This step creates an IAM role that allows GitHub Actions to assume the role using OIDC. The role ARN will be outputted after the apply.
+
+```bash
+cd terraform
+terraform init
+terraform apply
+# Output example:
+# ecr_repository_url = "ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/myapp"
+# github_oidc_role_arn = "arn:aws:iam::ACCONT_ID:role/github-ci-cd-repo"
+# staging_instance_public_ip = "18.153.68.11"
+# staging_url = "http://18.153.68.11"
+```
+
+Copy the role `ARN`. In Github repo create secret 
+
+3. Configure GitHub Actions Workflow
+
+Add Github secret:
+  - name: `AWS_OIDC_ROLE_ARN` 
+  - value: `arn:aws:iam::ACCOUNT_ID:role/github-oidc-oidec-repo`
+
+Set parameters in a workflow file `.github/workflows/staging.yml`:
+
+```yaml
+  AWS_REGION: eu-central-1
+  APP_NAME: myapp
+  IMAGE_TAG: staging-latest
+```
+
+This workflow builds a `Docker` image, pushes it to `ECR`, applies `Terraform` changes, and refreshes the `Docker` container on the `EC2` instance via `SSM`.
+
+
+
