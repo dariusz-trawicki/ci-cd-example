@@ -36,8 +36,8 @@ Copy the `github_oidc_role_arn` value.
 ####  3. Configure `GitHub Actions`: `secret` and `workflow` 
 
 Create Github secret:
-  - Name: `AWS_OIDC_ROLE_ARN` 
-  - Value: `arn:aws:iam::ACCOUNT_ID:role/github-oidc-oidec-repo`
+  - **Name**: `AWS_OIDC_ROLE_ARN` 
+  - **Value**: `arn:aws:iam::ACCOUNT_ID:role/github-oidc-oidec-repo`
 
 In `.github/workflows/staging.yml`, set environment variables:
 
