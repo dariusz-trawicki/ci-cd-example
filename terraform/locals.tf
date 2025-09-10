@@ -6,6 +6,7 @@ locals {
   # Amazon Linux 2 user_data: install Docker, login to ECR, run container on :80
   user_data_al2 = <<-EOF
   #!/bin/bash
+  sudo -i
   set -euo pipefail
   yum update -y
   amazon-linux-extras enable docker
