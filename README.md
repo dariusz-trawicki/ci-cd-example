@@ -36,10 +36,10 @@ Copy the `github_oidc_role_arn` value.
 ####  3. Configure `GitHub Actions`: `secret` and `workflow` 
 
 Create Github secret:
-  - name: `AWS_OIDC_ROLE_ARN` 
-  - value: `arn:aws:iam::ACCOUNT_ID:role/github-oidc-oidec-repo`
+  - Name: `AWS_OIDC_ROLE_ARN` 
+  - Value: `arn:aws:iam::ACCOUNT_ID:role/github-oidc-oidec-repo`
 
-Set parameters in a workflow file `.github/workflows/staging.yml`:
+In `.github/workflows/staging.yml`, set environment variables:
 
 ```yaml
 AWS_REGION: eu-central-1
@@ -47,7 +47,10 @@ APP_NAME: myapp
 IMAGE_TAG: staging-latest
 ```
 
-The workflow builds a `Docker` image, pushes it to `ECR`, applies `Terraform` changes, and refreshes the `Docker` container on the `EC2` instance via `SSM`.
+The workflow will:
+  - build and push a `Docker` image to `ECR`,
+  - run `terraform apply` (idempotent updates),
+  - refresh the container on the `EC2` instance via `SSM`.
 
 #### 4.Push to GitHub
 
