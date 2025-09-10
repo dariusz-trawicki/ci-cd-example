@@ -55,9 +55,9 @@ jobs:
         working-directory: ./terraform
         run: |
           terraform plan \
-            -var="aws_region=${{ env.AWS_REGION }}" \
-            -var="app_name=${{ env.APP_NAME }}" \
-            -var="environment=staging" \
+            # -var="aws_region=${{ env.AWS_REGION }}" \
+            # -var="app_name=${{ env.APP_NAME }}" \
+            # -var="environment=staging" \
             -var="image_tag=${{ env.IMAGE_TAG }}"
 
       - name: Terraform Apply

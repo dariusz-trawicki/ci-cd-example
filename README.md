@@ -1,11 +1,9 @@
-# CI/CD Pipeline with GitHub Actions and Terraform for AWS ((OIDC + Terraform + Docker)
+# CI/CD Pipeline with GitHub Actions and Terraform for AWS (OIDC + Terraform + Docker)
 
-
-This example shows how to deploy a Dockerized application to an EC2 instance using GitHub Actions and Terraform with OIDC authentication.
+This project shows how to deploy a `Dockerized` application to an `EC2` instance using `GitHub Actions` and `Terraform` with `OIDC` authentication.
 It includes:
-- Terraform code to set up AWS resources (EC2, ECR, IAM roles).
-- GitHub Actions workflow to build and push Docker images to ECR, and deploy to EC
-- EC2 instance configured to run Docker and pull images from ECR.
+- `Terraform` code to set up `AWS` resources (`EC2`, `ECR`, `IAM roles`).
+- `GitHub Actions` workflow to build and push `Docker` images to `ECR`, and deploy to `EC2` instance configured to run `Docker` and pull images from `ECR`.
 
 1. Create S3 bucket for state backend 
 
@@ -32,23 +30,40 @@ terraform apply
 # staging_url = "http://18.153.68.11"
 ```
 
-Copy the role `ARN`. In Github repo create secret 
+Copy the `github_oidc_role_arn` value.
 
-3. Configure GitHub Actions Workflow
+3. Configure `GitHub Actions`: `secret` and `workflow` 
 
-Add Github secret:
+Create Github secret:
   - name: `AWS_OIDC_ROLE_ARN` 
   - value: `arn:aws:iam::ACCOUNT_ID:role/github-oidc-oidec-repo`
 
 Set parameters in a workflow file `.github/workflows/staging.yml`:
 
 ```yaml
-  AWS_REGION: eu-central-1
-  APP_NAME: myapp
-  IMAGE_TAG: staging-latest
+AWS_REGION: eu-central-1
+APP_NAME: myapp
+IMAGE_TAG: staging-latest
 ```
 
-This workflow builds a `Docker` image, pushes it to `ECR`, applies `Terraform` changes, and refreshes the `Docker` container on the `EC2` instance via `SSM`.
+The workflow builds a `Docker` image, pushes it to `ECR`, applies `Terraform` changes, and refreshes the `Docker` container on the `EC2` instance via `SSM`.
+
+4. Push to Github (brach `main` or `develop`). The workflow will:
+  - **build & push** `myapp:staging-latest` to `ECR`,
+  - `terraform apply` (idempotent updates),
+  - refresh the container on `EC2` via `SSM`.
+
+5. Results
+
+Open: http://18.153.68.11
 
 
+6. Cleanup
+To destroy all resources created by Terraform, run:
 
+```bash
+cd terraform
+terraform destroy
+cd ../s3
+terraform destroy
+```
