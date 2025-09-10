@@ -31,9 +31,9 @@ variable "public_key_path" {
 
 # Empty disables SSH entirely (we use SSM instead).
 variable "ssh_cidr" {
-  type = string
-  # default = "" # SSH disabled (must be for Github action)
-  default = "109.241.40.117/32" # allow SSH only from my_IP
+  type    = string
+  default = "" # SSH disabled (must be for Github action)
+  # default = "109.241.40.117/32" # allow SSH only from my_IP
 }
 
 # Image tag that the pipeline will push to ECR
