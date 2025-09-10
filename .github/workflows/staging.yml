@@ -1,0 +1,71 @@
+name: staging
+
+on:
+  push:
+    branches: ["develop", "main"]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: eu-central-1
+  APP_NAME: myapp
+  IMAGE_TAG: staging-latest
+
+jobs:
+  build-and-terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Debug who we are (first runs)
+      - name: Who am I
+        run: aws sts get-caller-identity
+
+      # Build & push image (optional but handy)
+      - name: Login to ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build & push app image
+        run: |
+          REPO_URI=${{ steps.ecr.outputs.registry }}/${{ env.APP_NAME }}
+          docker build -t $REPO_URI:${{ env.IMAGE_TAG }} ./app
+          docker push $REPO_URI:${{ env.IMAGE_TAG }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
+
+      - name: Terraform Init (S3 backend)
+        working-directory: ./terraform
+        run: terraform init -reconfigure
+
+      - name: Terraform Plan
+        working-directory: ./terraform
+        run: |
+          terraform plan \
+            -var="aws_region=${{ env.AWS_REGION }}" \
+            -var="app_name=${{ env.APP_NAME }}" \
+            -var="environment=staging" \
+            -var="image_tag=${{ env.IMAGE_TAG }}"
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
+        working-directory: ./terraform
+        run: |
+          terraform apply -auto-approve \
+            -var="aws_region=${{ env.AWS_REGION }}" \
+            -var="app_name=${{ env.APP_NAME }}" \
+            -var="environment=staging" \
+            -var="image_tag=${{ env.IMAGE_TAG }}"
