@@ -16,7 +16,7 @@ terraform init
 terraform apply
 ```
 
-#### 2. Create an IAM Role for GitHub OIDC in AWS:
+#### 2. Create an IAM Role for GitHub OIDC
 
 This step creates an IAM role that allows GitHub Actions to assume the role using OIDC. The role ARN will be outputted after the apply.
 
