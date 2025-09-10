@@ -26,14 +26,14 @@ variable "ssh_key_name" {
 
 variable "public_key_path" {
   type    = string
-  default = "~/.ssh/test-ec2-key.pub" # lokalny plik publiczny
+  default = "~/.ssh/test-ec2-key.pub" # only for local apply
 }
 
 # Empty disables SSH entirely (we use SSM instead).
 variable "ssh_cidr" {
-  type = string
-  # default = "" # SSH disabled
-  default = "109.241.40.117/32" # allow SSH only from my_IP
+  type    = string
+  default = "" # SSH disabled (must be for Github action)
+  # default = "109.241.40.117/32" # allow SSH only from my_IP
 }
 
 # Image tag that the pipeline will push to ECR
